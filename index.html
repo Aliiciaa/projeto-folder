@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>folder RA</title>
+  <script src="https://cdn.jsdelivr.net/npm/aframe@1.2.0/dist/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar/dist/mindar-image.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar/dist/mindar-image-aframe.prod.js"></script>
+  <style>
+    body, html { margin: 0; height: 100%; overflow: hidden; }
+  </style>
+</head>
+<body>
+  <a-scene mindar-image="imageTargetSrc: ./targets.mind;" 
+           vr-mode-ui="enabled: false">
+    
+    <!-- Pré-carregamento de assets -->
+    <a-assets>
+      <video id="video1" src="./video.mp4" loop playsinline muted ></video>
+      <!--a-asset-item id="modelo3d" src="./modelo.glb"></a-asset-item>
+      <img id="imagem1" src="./arte.png"-->
+    </a-assets>
+
+    <!-- câmera -->
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+    <!-- Conteúdo que aparece ao reconhecer o gatilho -->
+    <a-entity mindar-image-target="targetIndex: 0">
+      <!-- Modelo 3D -->
+      <a-gltf-model src="#modelo3d" position="0 0 0" rotation="0 0 0" scale="0.5 0.5 0.5"></a-gltf-model>
+      
+      <!-- Imagem -->
+      <a-image src="#imagem1" position="0 0 0.1" rotation="0 0 0" scale="1 1 1"></a-image>
+      
+      <!-- Vídeo -->
+      <a-video id="ar-video" src="#video1" position="0 0 0.2" rotation="0 0 0" scale="1 2 1"></a-video>
+    </a-entity>
+
+    <script>
+      const videoEl = document.querySelector('#video1');
+      const sceneEl = document.querySelector('a-scene');
+
+      // Pausa o vídeo inicialmente
+      videoEl.pause();
+
+      // Toca o vídeo só quando o gatilho for detectado
+      sceneEl.addEventListener('targetFound', () => {
+        if(videoEl.paused) {
+          videoEl.play();
+          videoEl.muted = false;
+        }
+      });
+
+      // Pausa o vídeo quando o gatilho some
+      sceneEl.addEventListener('targetLost', () => {
+        if(!videoEl.paused) {
+          videoEl.pause();
+          videoEl.currentTime = 0; // opcional: reinicia o vídeo
+        }
+      });
+    </script>
+  </a-scene>
+</body>
+</html>
