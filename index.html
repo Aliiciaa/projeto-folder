@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>folder RA</title>
+  <title>Lirium RA - 3 vídeos</title>
   <script src="https://cdn.jsdelivr.net/npm/aframe@1.2.0/dist/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar/dist/mindar-image.prod.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar/dist/mindar-image-aframe.prod.js"></script>
@@ -13,52 +13,61 @@
 <body>
   <a-scene mindar-image="imageTargetSrc: ./targets.mind;" 
            vr-mode-ui="enabled: false">
-    
-    <!-- Pré-carregamento de assets -->
+
+    <!-- Pré-carregamento -->
     <a-assets>
-      <video id="video1" src="./video.mp4" loop playsinline muted ></video>
-      <!--a-asset-item id="modelo3d" src="./modelo.glb"></a-asset-item>
-      <img id="imagem1" src="./arte.png"-->
+      <video id="video1" src="./video1.mp4" loop playsinline muted></video>
+      <video id="video2" src="./video2.mp4" loop playsinline muted></video>
+      <video id="video3" src="./video3.mp4" loop playsinline muted></video>
     </a-assets>
 
     <!-- câmera -->
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-    <!-- Conteúdo que aparece ao reconhecer o gatilho -->
+    <!-- Gatilho 1 -->
     <a-entity mindar-image-target="targetIndex: 0">
-      <!-- Modelo 3D -->
-      <a-gltf-model src="#modelo3d" position="0 0 0" rotation="0 0 0" scale="0.5 0.5 0.5"></a-gltf-model>
-      
-      <!-- Imagem -->
-      <a-image src="#imagem1" position="0 0 0.1" rotation="0 0 0" scale="1 1 1"></a-image>
-      
-      <!-- Vídeo -->
-      <a-video id="ar-video" src="#video1" position="0 0 0.2" rotation="0 0 0" scale="1 2 1"></a-video>
+      <a-video src="#video1" position="0 0 0.2" scale="1 1 1"></a-video>
     </a-entity>
 
-    <script>
-      const videoEl = document.querySelector('#video1');
-      const sceneEl = document.querySelector('a-scene');
+    <!-- Gatilho 2 -->
+    <a-entity mindar-image-target="targetIndex: 1">
+      <a-video src="#video2" position="0 0 0.2" scale="1 1 1"></a-video>
+    </a-entity>
 
-      // Pausa o vídeo inicialmente
-      videoEl.pause();
+    <!-- Gatilho 3 -->
+    <a-entity mindar-image-target="targetIndex: 2">
+      <a-video src="#video3" position="0 0 0.2" scale="1 1 1"></a-video>
+    </a-entity>
 
-      // Toca o vídeo só quando o gatilho for detectado
-      sceneEl.addEventListener('targetFound', () => {
-        if(videoEl.paused) {
-          videoEl.play();
-          videoEl.muted = false;
-        }
-      });
-
-      // Pausa o vídeo quando o gatilho some
-      sceneEl.addEventListener('targetLost', () => {
-        if(!videoEl.paused) {
-          videoEl.pause();
-          videoEl.currentTime = 0; // opcional: reinicia o vídeo
-        }
-      });
-    </script>
   </a-scene>
+
+  <script>
+    // Vídeos
+    const video1 = document.querySelector('#video1');
+    const video2 = document.querySelector('#video2');
+    const video3 = document.querySelector('#video3');
+
+    // Targets
+    const target0 = document.querySelector('[mindar-image-target="targetIndex: 0"]');
+    const target1 = document.querySelector('[mindar-image-target="targetIndex: 1"]');
+    const target2 = document.querySelector('[mindar-image-target="targetIndex: 2"]');
+
+    // Função genérica para controlar vídeos
+    function setupTarget(target, video) {
+      target.addEventListener("targetFound", () => {
+        video.play();
+        video.muted = false;
+      });
+      target.addEventListener("targetLost", () => {
+        video.pause();
+        video.currentTime = 0;
+      });
+    }
+
+    // Aplica para os 3
+    setupTarget(target0, video1);
+    setupTarget(target1, video2);
+    setupTarget(target2, video3);
+  </script>
 </body>
 </html>
